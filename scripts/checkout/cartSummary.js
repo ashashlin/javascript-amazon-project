@@ -12,6 +12,7 @@ import {
   generateDeliveryDate,
 } from "../data/deliveryOptions.js";
 import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
+import { renderPaymentSummary } from "./paymentSummary.js";
 
 // Update the cart item quantity based on user input
 function updateCartItemQuantity(cartItemContainer, quantityInput, quantity) {
@@ -35,6 +36,7 @@ function updateCartItemQuantity(cartItemContainer, quantityInput, quantity) {
   }
 
   renderCartSummary();
+  renderPaymentSummary();
 }
 
 export function renderCartSummary() {
@@ -114,6 +116,7 @@ export function renderCartSummary() {
 
       updateDeliveryOption(productId, deliveryOptionId);
       renderCartSummary();
+      renderPaymentSummary();
     });
   });
 
@@ -158,6 +161,7 @@ export function renderCartSummary() {
       const { productId } = link.dataset;
       removeFromCart(productId);
       renderCartSummary();
+      renderPaymentSummary();
     });
   });
 }
