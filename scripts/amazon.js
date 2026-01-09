@@ -56,7 +56,7 @@ function renderProductsGrid() {
 
           <div class="product-spacer"></div>
 
-          <div class="added-to-cart">
+          <div class="added-to-cart js-added-to-cart">
             <img src="images/icons/checkmark.png" />
             Added
           </div>
@@ -74,6 +74,8 @@ function renderProductsGrid() {
 renderProductsGrid();
 
 // Add product to cart when clicking add to cart button
+const timeoutIds = {};
+
 document.querySelectorAll(".js-add-to-cart").forEach((button) => {
   button.addEventListener("click", () => {
     const { productId } = button.dataset;
@@ -88,5 +90,15 @@ document.querySelectorAll(".js-add-to-cart").forEach((button) => {
     // Update cartQuantity in the header
     document.querySelector(".js-cart-quantity").innerHTML =
       updateCartQuantity();
+
+    // Display 'Added' after clicking add to cart
+    const addedMsg = productContainer.querySelector(".js-added-to-cart");
+
+    addedMsg.classList.add("added");
+    clearTimeout(timeoutIds[productId]);
+    const timeoutId = setTimeout(() => {
+      addedMsg.classList.remove("added");
+    }, 2000);
+    timeoutIds[productId] = timeoutId;
   });
 });
