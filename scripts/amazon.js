@@ -1,11 +1,17 @@
 import { products } from "./data/products.js";
+import { addToCart, updateCartQuantity } from "./data/cart.js";
+
+// Update cartQuantity in the header
+document.querySelector(".js-cart-quantity").innerHTML = updateCartQuantity();
 
 function renderProductsGrid() {
   let productsHTML = "";
 
   products.forEach((product) => {
     productsHTML += `
-      <div class="product-container">
+      <div class="product-container js-product-container js-product-container-${
+        product.id
+      }">
           <div class="product-image-container">
             <img
               class="product-image"
@@ -32,7 +38,9 @@ function renderProductsGrid() {
           )}</div>
 
           <div class="product-quantity-container">
-            <select>
+            <select class="js-product-quantity js-product-quantity-${
+              product.id
+            }" data-product-id="${product.id}">
               <option selected value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -53,7 +61,9 @@ function renderProductsGrid() {
             Added
           </div>
 
-          <button class="add-to-cart-button button-primary">Add to Cart</button>
+          <button class="add-to-cart-button button-primary js-add-to-cart" data-product-id="${
+            product.id
+          }">Add to Cart</button>
         </div>
     `;
   });
@@ -62,3 +72,21 @@ function renderProductsGrid() {
 }
 
 renderProductsGrid();
+
+// Add product to cart when clicking add to cart button
+document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+  button.addEventListener("click", () => {
+    const { productId } = button.dataset;
+    const productContainer = button.closest(".js-product-container");
+    const quantityDropdown = productContainer.querySelector(
+      ".js-product-quantity"
+    );
+    const quantity = Number(quantityDropdown.value);
+
+    addToCart(productId, quantity);
+
+    // Update cartQuantity in the header
+    document.querySelector(".js-cart-quantity").innerHTML =
+      updateCartQuantity();
+  });
+});
