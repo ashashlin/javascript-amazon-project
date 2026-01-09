@@ -32,6 +32,7 @@ export function addToCart(productId, quantity) {
     cart.push({
       productId,
       quantity,
+      deliveryOptionId: "1",
     });
   }
 
