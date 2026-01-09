@@ -1,4 +1,4 @@
-import { cart, saveToStorage } from "./data/cart.js";
+import { cart, updateDeliveryOption } from "./data/cart.js";
 import { products } from "./data/products.js";
 import {
   deliveryOptions,
@@ -44,7 +44,7 @@ function renderCartSummary() {
                   <span> Quantity: <span class="quantity-label">${
                     cartItem.quantity
                   }</span> </span>
-                  <span class="update-quantity-link link-primary">
+                  <span class="update-quantity-link link-primary js-update-quantity">
                     Update
                   </span>
                   <span class="delete-quantity-link link-primary">
@@ -72,14 +72,14 @@ function renderCartSummary() {
     button.addEventListener("click", () => {
       const { deliveryOptionId, productId } = button.dataset;
 
-      cart.forEach((cartItem) => {
-        if (cartItem.productId === productId) {
-          cartItem.deliveryOptionId = deliveryOptionId;
-          saveToStorage();
-          renderCartSummary();
-        }
-      });
+      updateDeliveryOption(productId, deliveryOptionId);
+      renderCartSummary();
     });
+  });
+
+  // Update cart item quantity
+  document.querySelectorAll(".js-update-quantity").forEach((link) => {
+    link.addEventListener("click", () => {});
   });
 }
 
