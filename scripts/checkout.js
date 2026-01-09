@@ -1,43 +1,11 @@
-import { cart } from "./data/cart.js";
+import { cart, saveToStorage } from "./data/cart.js";
 import { products } from "./data/products.js";
-import { deliveryOptions } from "./data/deliveryOptions.js";
+import {
+  deliveryOptions,
+  renderDeliveryOptions,
+  generateDeliveryDate,
+} from "./data/deliveryOptions.js";
 import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
-
-function renderDeliveryOptions(cartItem) {
-  let deliveryOptionsHTML = "";
-
-  const today = dayjs();
-
-  deliveryOptions.forEach((option) => {
-    const deliveryDateObj = today.add(option.deliveryDays, "day");
-    const deliveryDate = deliveryDateObj.format("dddd, MMMM D");
-    const deliveryPrice =
-      option.priceCents === 0
-        ? "FREE"
-        : `$${(option.priceCents / 100).toFixed(2)} -`;
-
-    deliveryOptionsHTML += `
-      <div class="delivery-option">
-        <input
-          type="radio"
-          ${
-            cartItem.deliveryOptionId === option.deliveryOptionId
-              ? "checked"
-              : ""
-          }
-          class="delivery-option-input"
-          name="delivery-option-${cartItem.productId}"
-        />
-        <div>
-          <div class="delivery-option-date">${deliveryDate}</div>
-          <div class="delivery-option-price">${deliveryPrice} Shipping</div>
-        </div>
-      </div>
-    `;
-  });
-
-  return deliveryOptionsHTML;
-}
 
 function renderCartSummary() {
   let cartSummaryHTML = "";
@@ -52,9 +20,12 @@ function renderCartSummary() {
     });
 
     if (matchingProduct) {
+      const today = dayjs();
+      const deliveryDate = generateDeliveryDate(today, cartItem);
+
       cartSummaryHTML += `
         <div class="cart-item-container">
-            <div class="delivery-date">Delivery date: Tuesday, June 21</div>
+            <div class="delivery-date">Delivery date: ${deliveryDate}</div>
 
             <div class="cart-item-details-grid">
               <img
@@ -86,7 +57,7 @@ function renderCartSummary() {
                 <div class="delivery-options-title">
                   Choose a delivery option:
                 </div>
-                ${renderDeliveryOptions(cartItem)}
+                ${renderDeliveryOptions(today, cartItem)}
               </div>
             </div>
           </div>
@@ -95,6 +66,21 @@ function renderCartSummary() {
   });
 
   document.querySelector(".js-order-summary").innerHTML = cartSummaryHTML;
+
+  // Make deliveryOptions interactive
+  document.querySelectorAll(".js-radio").forEach((button) => {
+    button.addEventListener("click", () => {
+      const { deliveryOptionId, productId } = button.dataset;
+
+      cart.forEach((cartItem) => {
+        if (cartItem.productId === productId) {
+          cartItem.deliveryOptionId = deliveryOptionId;
+          saveToStorage();
+          renderCartSummary();
+        }
+      });
+    });
+  });
 }
 
 renderCartSummary();

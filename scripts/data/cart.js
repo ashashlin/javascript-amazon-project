@@ -12,7 +12,7 @@ export const cart = JSON.parse(localStorage.getItem("cart")) || [
   },
 ];
 
-function saveToStorage() {
+export function saveToStorage() {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
