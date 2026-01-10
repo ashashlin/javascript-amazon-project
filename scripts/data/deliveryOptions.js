@@ -20,8 +20,23 @@ export function renderDeliveryOptions(today, cartItem) {
   let deliveryOptionsHTML = "";
 
   deliveryOptions.forEach((option) => {
-    const deliveryDateObj = today.add(option.deliveryDays, "day");
-    const deliveryDate = deliveryDateObj.format("dddd, MMMM D");
+    let currentDate = today;
+    let deliveryDate;
+    let remainingDays = option.deliveryDays;
+
+    while (remainingDays > 0) {
+      currentDate = currentDate.add(1, "day");
+      const weekday = currentDate.format("dddd");
+
+      if (weekday === "Saturday" || weekday === "Sunday") {
+        continue;
+      }
+
+      remainingDays--;
+    }
+
+    deliveryDate = currentDate.format("dddd, MMMM D");
+
     const deliveryPrice =
       option.priceCents === 0
         ? "FREE"
@@ -61,13 +76,24 @@ export function generateDeliveryDate(today, cartItem) {
     }
   });
 
-  let deliveryDateObj;
+  let currentDate = today;
   let deliveryDate;
 
   if (matchingDeliveryOption) {
-    deliveryDateObj = today.add(matchingDeliveryOption.deliveryDays, "day");
-    deliveryDate = deliveryDateObj.format("dddd, MMMM D");
+    let remainingDays = matchingDeliveryOption.deliveryDays;
+
+    while (remainingDays > 0) {
+      currentDate = currentDate.add(1, "day");
+      const weekday = currentDate.format("dddd");
+
+      if (weekday === "Saturday" || weekday === "Sunday") {
+        continue;
+      }
+
+      remainingDays--;
+    }
   }
 
+  deliveryDate = currentDate.format("dddd, MMMM D");
   return deliveryDate;
 }
