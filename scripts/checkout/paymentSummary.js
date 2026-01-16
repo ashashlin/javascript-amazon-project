@@ -1,5 +1,6 @@
 import { updateCartQuantity, cart } from "../data/cart.js";
 import { deliveryOptions } from "../data/deliveryOptions.js";
+import { addOrder, placeOrder } from "../data/orders.js";
 import { products } from "../data/products.js";
 
 export function renderPaymentSummary() {
@@ -78,10 +79,18 @@ export function renderPaymentSummary() {
       </div>
     </div>
 
-    <button class="place-order-button button-primary">
+    <button class="place-order-button button-primary js-place-order">
       Place your order
     </button>
   `;
 
   document.querySelector(".js-payment-summary").innerHTML = paymentHTML;
+
+  document
+    .querySelector(".js-place-order")
+    .addEventListener("click", async () => {
+      const order = await placeOrder();
+      addOrder(order);
+      window.location.href = "orders.html";
+    });
 }
