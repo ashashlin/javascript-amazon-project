@@ -1,4 +1,4 @@
-import { products } from "./data/products.js";
+import { products, loadProducts } from "./data/products.js";
 import { addToCart, updateCartQuantity } from "./data/cart.js";
 
 // Update cartQuantity in the header
@@ -71,34 +71,42 @@ function renderProductsGrid() {
   document.querySelector(".js-products-grid").innerHTML = productsHTML;
 }
 
-renderProductsGrid();
-
 // Add product to cart when clicking add to cart button
 const timeoutIds = {};
 
-document.querySelectorAll(".js-add-to-cart").forEach((button) => {
-  button.addEventListener("click", () => {
-    const { productId } = button.dataset;
-    const productContainer = button.closest(".js-product-container");
-    const quantityDropdown = productContainer.querySelector(
-      ".js-product-quantity"
-    );
-    const quantity = Number(quantityDropdown.value);
+function addProductToCart() {
+  document.querySelectorAll(".js-add-to-cart").forEach((button) => {
+    button.addEventListener("click", () => {
+      const { productId } = button.dataset;
+      const productContainer = button.closest(".js-product-container");
+      const quantityDropdown = productContainer.querySelector(
+        ".js-product-quantity"
+      );
+      const quantity = Number(quantityDropdown.value);
 
-    addToCart(productId, quantity);
+      addToCart(productId, quantity);
 
-    // Update cartQuantity in the header
-    document.querySelector(".js-cart-quantity").innerHTML =
-      updateCartQuantity();
+      // Update cartQuantity in the header
+      document.querySelector(".js-cart-quantity").innerHTML =
+        updateCartQuantity();
 
-    // Display 'Added' after clicking add to cart
-    const addedMsg = productContainer.querySelector(".js-added-to-cart");
+      // Display 'Added' after clicking add to cart
+      const addedMsg = productContainer.querySelector(".js-added-to-cart");
 
-    addedMsg.classList.add("added");
-    clearTimeout(timeoutIds[productId]);
-    const timeoutId = setTimeout(() => {
-      addedMsg.classList.remove("added");
-    }, 2000);
-    timeoutIds[productId] = timeoutId;
+      addedMsg.classList.add("added");
+      clearTimeout(timeoutIds[productId]);
+      const timeoutId = setTimeout(() => {
+        addedMsg.classList.remove("added");
+      }, 2000);
+      timeoutIds[productId] = timeoutId;
+    });
   });
-});
+}
+
+async function loadPage() {
+  await loadProducts();
+  renderProductsGrid();
+  addProductToCart();
+}
+
+await loadPage();
