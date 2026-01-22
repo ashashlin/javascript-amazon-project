@@ -1,4 +1,4 @@
-import { updateCartQuantity, cart } from "../data/cart.js";
+import { updateCartQuantity, cart, saveToStorage } from "../data/cart.js";
 import { deliveryOptions } from "../data/deliveryOptions.js";
 import { addOrder, placeOrder } from "../data/orders.js";
 import { products } from "../data/products.js";
@@ -91,6 +91,8 @@ export function renderPaymentSummary() {
     .addEventListener("click", async () => {
       const order = await placeOrder();
       addOrder(order);
+      cart.length = 0;
+      saveToStorage();
       window.location.href = "orders.html";
     });
 }

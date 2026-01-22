@@ -1,8 +1,9 @@
 import { orders } from "./data/orders.js";
 import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
 import { products, loadProducts } from "./data/products.js";
+import { updateCartQuantity } from "./data/cart.js";
 
-console.log(orders);
+document.querySelector(".js-cart-quantity").innerHTML = updateCartQuantity();
 
 function renderProductTracking() {
   const url = new URL(window.location.href);

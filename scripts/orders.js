@@ -1,6 +1,9 @@
 import { orders } from "./data/orders.js";
 import dayjs from "https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js";
 import { loadProducts, products } from "./data/products.js";
+import { updateCartQuantity } from "./data/cart.js";
+
+document.querySelector(".js-cart-quantity").innerHTML = updateCartQuantity();
 
 function renderOrderProducts(order) {
   const orderProducts = order.products;
