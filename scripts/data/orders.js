@@ -1,6 +1,6 @@
 import { cart } from "./cart.js";
 
-const orders = JSON.parse(localStorage.getItem("orders")) || [];
+export const orders = JSON.parse(localStorage.getItem("orders")) || [];
 
 export async function placeOrder() {
   try {
