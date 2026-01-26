@@ -5,6 +5,31 @@ import { updateCartQuantity } from "./data/cart.js";
 
 document.querySelector(".js-cart-quantity").innerHTML = updateCartQuantity();
 
+// Clear search and newProducts in localStorage when the home page link is clicked
+document.querySelector(".js-header-link").addEventListener("click", () => {
+  localStorage.removeItem("search");
+  localStorage.removeItem("newProducts");
+});
+
+document.querySelector(".js-search-button").addEventListener("click", () => {
+  const searchValue = document
+    .querySelector(".js-search-bar")
+    .value.toLowerCase();
+
+  if (!searchValue) {
+    return;
+  }
+
+  localStorage.setItem("search", searchValue);
+
+  const newProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchValue),
+  );
+  localStorage.setItem("newProducts", JSON.stringify(newProducts));
+
+  window.location.href = "amazon.html";
+});
+
 function renderOrderProducts(order) {
   const orderProducts = order.products;
 
@@ -13,7 +38,7 @@ function renderOrderProducts(order) {
   orderProducts.forEach((orderProduct) => {
     const { productId } = orderProduct;
     const deliveryDate = dayjs(orderProduct.estimatedDeliveryTime).format(
-      "MMMM D"
+      "MMMM D",
     );
 
     let matchingProduct;

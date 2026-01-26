@@ -4,7 +4,15 @@ import { addToCart, updateCartQuantity } from "./data/cart.js";
 // Update cartQuantity in the header
 document.querySelector(".js-cart-quantity").innerHTML = updateCartQuantity();
 
-function renderProductsGrid() {
+// Clear search and newProducts in localStorage when the home page link is clicked
+document.querySelector(".js-header-link").addEventListener("click", () => {
+  localStorage.removeItem("search");
+  localStorage.removeItem("newProducts");
+  renderProductsGrid(products);
+  addProductToCart();
+});
+
+function renderProductsGrid(products) {
   let productsHTML = "";
 
   products.forEach((product) => {
@@ -34,7 +42,7 @@ function renderProductsGrid() {
           </div>
 
           <div class="product-price">$${(product.priceCents / 100).toFixed(
-            2
+            2,
           )}</div>
 
           <div class="product-quantity-container">
@@ -80,7 +88,7 @@ function addProductToCart() {
       const { productId } = button.dataset;
       const productContainer = button.closest(".js-product-container");
       const quantityDropdown = productContainer.querySelector(
-        ".js-product-quantity"
+        ".js-product-quantity",
       );
       const quantity = Number(quantityDropdown.value);
 
@@ -103,9 +111,52 @@ function addProductToCart() {
   });
 }
 
+// For products filtering when the search button is clicked
+let newProducts = JSON.parse(localStorage.getItem("newProducts")) || [];
+
+const url = new URL(window.location.href);
+if (localStorage.getItem("search")) {
+  url.searchParams.set("search", localStorage.getItem("search"));
+  window.history.replaceState(null, "", url); // changes address bar without reloading the page
+}
+
+function searchProducts() {
+  document.querySelector(".js-search-button").addEventListener("click", () => {
+    const searchValue = document
+      .querySelector(".js-search-bar")
+      .value.toLowerCase();
+
+    if (!searchValue) {
+      return;
+    }
+
+    localStorage.setItem("search", searchValue);
+    url.searchParams.set("search", searchValue);
+    window.history.replaceState(null, "", url); // changes address bar without reloading the page
+
+    newProducts = products.filter((product) =>
+      product.name.toLowerCase().includes(searchValue),
+    );
+    localStorage.setItem("newProducts", JSON.stringify(newProducts));
+
+    renderProductsGrid(newProducts);
+    addProductToCart();
+  });
+}
+
+searchProducts();
+
 async function loadPage() {
-  await loadProducts();
-  renderProductsGrid();
+  const products = await loadProducts();
+
+  const searchParam = url.searchParams.get("search");
+
+  if (!searchParam) {
+    renderProductsGrid(products);
+  } else {
+    renderProductsGrid(newProducts);
+  }
+
   addProductToCart();
 }
 

@@ -477,6 +477,8 @@ export async function loadProducts() {
   try {
     const res = await fetch("https://supersimplebackend.dev/products");
     products = await res.json();
+
+    return products;
   } catch (error) {
     console.log("Unexpected error. Please try again later.");
   }
